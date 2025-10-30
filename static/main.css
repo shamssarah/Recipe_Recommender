@@ -1,0 +1,44 @@
+/* Basic styling for the tags */
+#tag-container {
+    margin: 10px 0;
+    padding: 5px;
+    border: 1px solid #ccc;
+    min-height: 20px;
+}
+
+.tag {
+    display: inline-flex; /* Allows the button to align nicely */
+    align-items: center;
+    background-color: #e0f7fa; /* Light blue background for visibility */
+    color: #00796b;
+    padding: 5px 10px;
+    border-radius: 15px;
+    margin: 4px;
+    font-size: 0.9em;
+    cursor: default;
+    border: 1px solid #00bcd4;
+}
+
+.remove-tag {
+    background: none;
+    border: none;
+    color: #00796b;
+    font-weight: bold;
+    margin-left: 5px;
+    cursor: pointer;
+    font-size: 0.8em;
+    padding: 0;
+    line-height: 1;
+}
+
+.remove-tag:hover {
+    color: #ff5252;
+}
+
+/* Styling for the recipe items */
+.recipe-item {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
