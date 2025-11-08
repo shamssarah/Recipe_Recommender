@@ -1,68 +1,62 @@
-from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
+from fastapi import FastAPI, HTTPException, Query
+from pydantic import BaseModel, Field
+from typing import List, Optional
+from itertools import count
+from typing import Annotated
+import uvicorn
+
+import model
+from database import engine, SessionLocal
+from sqlalchemy.orm import Session
+
+app = FastAPI(
+    title="WiseCook",
+    version="0.1.0",
+    description="A minimal, generic FastAPI application with simple in-memory recipe storage.",
+)
+
+model.Base.metadata.create_all (bind = engine)
+_id_counter = count(1)
+
+#data validation
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+db_dependency = Annotated[Session,Depends(get_db)]
 
 
-# def create_app():
-app = Flask(__name__)
-    #Configuration
+@app.post('/users/', status_code=status.HTTP_201_CREATED)
+async def create_user(user:UserBase, db:db_dependency):
+    db_user = model.User(**user.dict())
+    db.add(db_user)
+
+# In-memory "database"
+
+@app.on_event("startup")
+async def startup_event():
+    # seed with a couple of examples
+    r1 = Recipe(id=next(_id_counter), title="Tomato Pasta", ingredients=["tomato", "pasta", "olive oil"], instructions="Cook pasta and toss with sauce.")
+    r2 = Recipe(id=next(_id_counter), title="Avocado Toast", ingredients=["bread", "avocado", "salt"], instructions="Toast bread, mash avocado, season.")
+    _recipes[r1.id] = r1
+    _recipes[r2.id] = r2
 
 
-db = SQLAlchemy()
+@app.get("/", response_model=dict)
+async def read_root():
+    return {"service": "Recipe Recommender", "version": app.version}
 
-@app.route("/", methods=["GET"])
-def index():
-    return jsonify(message="Recipe Recommender API", status="ok")
 
-#MODELS
+@app.get("/health", response_model=dict)
+async def health():
+    return {"status": "ok"}
 
-#CRUD
-"""
-Recipe Creators
-"""
-class User (db.Model):
-    id = db.Column (db.Integer, primary_key=True)
-    name = db.Column (db.String(100), unique= True, nullable=False)
-    
-# def create_user():
-# def delete_user():
-# def update_user():
-# def get_user():
 
-"""
-Recipe
-"""
-class Recipe (db.Model):
-    creator_id =  db.relationship('User', backref='creator', lazy=True)
-    id = db.Column (db.Integer, primary_key=True)
-    name = db.Column (db.String(100), unique= True, nullable=False)
-
-# def create_recipe ():
-# def delete_recipe():
-# def update_recipe():
-# def get_recipe():
-
-# @app.route("/fetch-all-recipes",methods=['GET,'POST'])
-# def get_recipes(): #all recipes fetched that match the ingredients inserted into 'search engine'
-
-@app.route("/recipes", methods=["GET"])
-def list_recipes():
-    # placeholder sample data
-    sample_recipes = [
-        {"id": 1, "name": "Pancakes", "ingredients": ["flour", "milk", "egg"]},
-        {"id": 2, "name": "Omelette", "ingredients": ["egg", "cheese", "salt"]},
-    ]
-    return jsonify(recipes=sample_recipes)
-
-@app.route("/recipes", methods=["POST"])
-def create_recipe():
-    data = request.get_json(silent=True) or {}
-    # echo back received data with a fake id (replace with DB logic later)
-    recipe = {"id": 999, **data}
-    return jsonify(recipe=recipe), 201
 
 if __name__ == "__main__":
-    # app = create_app()
-    db.init_app(app)
-    with app.app_context():
-        db.create_all()
-    app.run(host="127.0.0.1", port=5000, debug=True)
+
+    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)

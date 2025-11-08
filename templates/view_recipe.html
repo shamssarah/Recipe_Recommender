@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delicious Chocolate Chip Cookies Recipe</title>
+    <link rel="stylesheet" href="../static/css/recipe.css">
+</head>
+<body>
+    <header>
+        <h1 id="recipe-title">Loading Recipe...</h1>
+    </header>
+
+    <main class="container">
+        <div class="image-section">
+            <img id="recipe-image" src="" alt="Recipe Image" class="main-image">
+        </div>
+
+        <section class="details-section">
+            <p id="recipe-description"></p>
+            <div class="stats">
+                <p><strong>Prep Time:</strong> <span id="prep-time"></span></p>
+                <p><strong>Cook Time:</strong> <span id="cook-time"></span></p>
+                <p><strong>Servings:</strong> <span id="servings"></span></p>
+            </div>
+        </section>
+
+        <section class="ingredients-section">
+            <h2><span role="img" aria-label="ingredients icon">📝</span> Ingredients</h2>
+            <ul id="ingredients-list">
+                </ul>
+        </section>
+
+        <section class="instructions-section">
+            <h2><span role="img" aria-label="instructions icon"></span> Instructions</h2>
+            <ol id="instructions-list">
+                </ol>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Recipe Viewer. Data fetched via TypeScript.</p>
+    </footer>
+
+    <script src="recipe.js"></script> 
+</body>
+</html>
