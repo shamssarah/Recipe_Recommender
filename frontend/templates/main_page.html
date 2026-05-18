@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiseCook</title>
+    <link rel="stylesheet" href="/static/css/main.css">  <!-- ADD THIS -->
+</head>
+<body>
+
+    <h1>WiseCook 🍳</h1>
+
+    <section id="search-section">
+        <label for="ingredient-input">What's in your pantry?</label>
+       <input type="text" id="ingredient-input" list="ingredient-suggestions" placeholder="e.g. chicken, rice, garlic">
+        <datalist id="ingredient-suggestions"></datalist>
+        <button id="add-tag-button">Add</button>
+        <div id="tag-container"></div>
+    </section>
+
+    <section id="results-section">
+        <div id="results-container"></div>
+    </section>
+ 
+    <script src="/static/js/main.js"></script>
+    </body>
+</html>
