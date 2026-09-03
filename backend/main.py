@@ -1,9 +1,27 @@
-from fastapi import FastAPI, Request
+from collections import Counter
+
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 from backend.data_loader import load_recipes
 from backend.logic.matching_logic import match_recipes
+
+
+
+# -------------------- STARTUP --------------------
+
+RECIPES = load_recipes()
+
+all_ingredients = []
+for recipe in RECIPES:
+    all_ingredients.extend(recipe['tag']['base'])
+
+counts = Counter(all_ingredients)
+SORTED_INGREDIENTS = [item for item, _ in counts.most_common()]  # all, sorted by freq
+
+#-------------------- APP SETUP --------------------
+
 
 app = FastAPI()
 
@@ -17,7 +35,6 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 templates = Jinja2Templates(directory="frontend/templates")
 
-RECIPES = load_recipes()
 
 # --- Page routes ---
 @app.get("/")
@@ -39,13 +56,17 @@ def match(payload: dict):
 def get_recipe(recipe_id: int):
     recipe = next((r for r in RECIPES if r['id'] == recipe_id), None)
     if not recipe:
-        return {"error": "Recipe not found"}, 404
+        raise HTTPException(status_code=404, detail="Recipe not found")
     return recipe
 
-@app.get("/ingredients")
-def get_ingredients():
-    all_ingredients = set()
-    for recipe in RECIPES:
-        all_ingredients.update(recipe['tag']['base'])
-        # all_ingredients.update(recipe['tag']['specific'])
-    return sorted(list(all_ingredients))
+@app.get("/ingredients/common")
+def get_common_ingredients():
+    return SORTED_INGREDIENTS[:2000]  # top 2000, called once on frontend init
+
+@app.get("/ingredients/search")
+def search_ingredients(q: str):
+    if len(q) < 3:
+        return []
+    q_lower = q.lower()
+    matches = [i for i in SORTED_INGREDIENTS if q_lower in i.lower()]
+    return matches[:10]

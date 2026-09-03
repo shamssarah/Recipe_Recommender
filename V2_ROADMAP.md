@@ -61,7 +61,7 @@ User page
 - [ ] **(V2)Add database** — SQLite to start, PostgreSQL later. Store:
       user pantry (ingredients + quantities + expiry dates), saved recipes,
       cuisine preferences, cook/skip history. Pantry should persist between sessions
-- [ ] **(V2)Wire up recipe page** — view_recipe.html needs to fetch from GET /recipe/{id}
+- [X] **(V2)Wire up recipe page** — view_recipe.html needs to fetch from GET /recipe/{id}
       and populate all fields. Pass recipe id via URL param when clicking a card:
       `window.location.href = /recipe?id=${recipe.id}`
 - [ ] **Meal type + cuisine tags** — recipes are currently unfiltered. Add tags for:
@@ -73,9 +73,9 @@ User page
       Required before DB pantry makes sense
 
 ### Scraping
-- [ ] **(V2)Rescrape AllRecipes** - (Find a new dataset that provides necessary variable or rescrape) — current dataset is limited and missing fields.
+- [X] (V2)Rescrape AllRecipes - **(Find a new dataset that provides necessary variable or rescrape) — current dataset is limited and missing fields.**
       When scraping collect:
-  - [ ] Description field — needed for recipe menu card
+  - [X] Description field — needed for recipe menu card
   - [ ] Full resolution images saved locally (don't rely on CDN links that break)
   - [ ] User ratings and review count — display as stars on recipe card
   - [ ] Nutrition data per serving:
@@ -84,8 +84,8 @@ User page
     - [ ] Calories, carbs, fat
   - [ ] USDA FoodData Central API as second opinion for missing nutrition values
         (https://api.nal.usda.gov/fdc/v1/foods/search)
-  - [ ] Meal type and cuisine tags if available on the page
-  - [ ] Prep time, cook time, servings
+  - [X] Meal type and cuisine tags if available on the page
+  - [X] Prep time, cook time, servings
 
 ### Matching & Intelligence
 - [ ] **Substitution graph** — model ingredient substitutions as a directed graph using NetworkX.

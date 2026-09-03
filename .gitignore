@@ -27,3 +27,9 @@ Thumbs.db
 
 *.ipynb_checkpoints/
 *.ipynb
+
+
+#include
+
+! data/canonical_map.json
+! data/processed_recipes.json

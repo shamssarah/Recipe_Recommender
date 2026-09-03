@@ -18,7 +18,7 @@ def match_recipes( user_ingredients: list[str], recipes: list[dict], top_n: int 
     
     # print first recipe tags to compare
     first = recipes[0]
-    print(f"First recipe tags: {set(first['tag'][mode])} --> {first['title']}")
+    print(f"First recipe tags: {set(first['tag'][mode])} --> {first['title']}, {first['id']}")
     
     results = []
     for recipe in recipes:
@@ -30,6 +30,7 @@ def match_recipes( user_ingredients: list[str], recipes: list[dict], top_n: int 
         coverage = len(matched) / len(tags) if tags else 0
         
         results.append({
+            "id": recipe['id'],
             "title": recipe['title'],
             "coverage": round(coverage, 2),
             "ingredients": list(tags),

@@ -52,9 +52,11 @@ is processed through a multi-stage pipeline:
 ```
 project/
   backend/
-    main.py           # FastAPI app and routes
-    matcher.py        # matching engine
-    data_loader.py    # loads processed recipes on startup
+    logic/
+      matching_logic.py   # recommendation logic
+    main.py               # FastAPI app and routes
+    matcher.py            # matching engine
+    data_loader.py        # loads processed recipes on startup
   frontend/
     static/
       css/main.css
@@ -62,7 +64,7 @@ project/
     templates/
       main_page.html
       view_recipe.html
-  data/               # not included in repo — generate locally
+  data/                   # not included in repo — generate locally
     processed_recipes.json
     canonical_map.json
 ```

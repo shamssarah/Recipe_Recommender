@@ -3,13 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delicious Chocolate Chip Cookies Recipe</title>
-    <link rel="stylesheet" href="../static/css/recipe.css">
+    <title>Recipe — WiseCook</title>
+    <link rel="stylesheet" href="/static/css/main.css">  
 </head>
 <body>
-    <header>
-        <h1 id="recipe-title">Loading Recipe...</h1>
-    </header>
+
+    <div class="back-bar">
+        <a href="/">WiseCook 🍳</a>
+    </div>
+
+    <!-- Dynamic content injected by JS
+    <div id="app">
+        <div class="state-msg">
+            <div class="spinner"></div>
+            Loading recipe…
+        </div>
+    </div> -->
+
 
     <main class="container">
         <div class="image-section">
@@ -19,9 +29,19 @@
         <section class="details-section">
             <p id="recipe-description"></p>
             <div class="stats">
+                <p><strong>Total Time:</strong> <span id="total-time"></span></p>
                 <p><strong>Prep Time:</strong> <span id="prep-time"></span></p>
                 <p><strong>Cook Time:</strong> <span id="cook-time"></span></p>
                 <p><strong>Servings:</strong> <span id="servings"></span></p>
+                <!-- <p><strong>Calories:</strong> <span id="calories"></span></p>
+                <p><strong>Protein:</strong> <span id="protein"></span></p>
+                <p><strong>Carbs:</strong> <span id="carbs"></span></p>
+                <p><strong>Fat:</strong> <span id="fat"></span></p>
+                <p><strong>Fiber:</strong> <span id="fiber"></span></p>
+                <p><strong>Rating:</strong> <span id="rating"></span></p>
+                <p><strong>Difficulty:</strong> <span id="difficulty"></span></p> -->
+                <p><strong>Cuisine:</strong> <span id="cuisine"></span></p>
+                <p><strong>Description:</strong> <span id="description"></span></p>
             </div>
         </section>
 
@@ -38,11 +58,6 @@
         </section>
 
     </main>
-
-    <footer>
-        <p>&copy; 2025 Recipe Viewer. Data fetched via TypeScript.</p>
-    </footer>
-
-    <script src="recipe.js"></script> 
+    <script src="/static/js/recipe_card.js"></script>
 </body>
 </html>

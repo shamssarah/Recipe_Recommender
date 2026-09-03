@@ -8,7 +8,7 @@ import os
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-flash-latest")  # free tier model
+model = genai.GenerativeModel("gemini-2.5-flash")  # free tier model
 #gemini-flash-latest
 def canonicalize_batch(phrases: list[str]) -> dict:
     phrase_list = "\n".join(f"- {p}" for p in phrases)
@@ -115,38 +115,85 @@ Format:
     
     return json.loads(raw.strip())
 
-
-def build_canonical_map(csv_path: str, output_path: str = "canonical_map.json"):
+def build_canonical_map(csv_path: str, output_path: str = "data/canonical_map.json", log_path: str = "/log/failed_phrases.log"):
     df = pd.read_csv(csv_path)
-    phrases = df["Phrase"].tolist()
+    # dropna() ensures we don't accidentally pass null values to the API
+    all_phrases = df["Phrase"].dropna().tolist()
 
+    # 1. Load existing progress
     canonical_map = {}
+    if os.path.exists(output_path):
+        with open(output_path, "r") as f:
+            try:
+                canonical_map = json.load(f)
+                print(f"Loaded {len(canonical_map)} previously processed phrases.")
+            except json.JSONDecodeError:
+                print("Existing JSON is corrupted or empty. Starting fresh.")
+
+    # 2. Filter out phrases that are already in the map
+    phrases = [p for p in all_phrases if p not in canonical_map]
+    
+    if not phrases:
+        print("All phrases have already been processed!")
+        return canonical_map
+
+    print(f"Remaining phrases to process: {len(phrases)}")
     batch_size = 50
 
+    if os.path.dirname(log_path):
+        os.makedirs(os.path.dirname(log_path), exist_ok=True)
+        
     for i in range(0, len(phrases), batch_size):
         batch = phrases[i:i + batch_size]
         print(f"Batch {i // batch_size + 1} / {-(-len(phrases) // batch_size)}...")
 
         try:
             result = canonicalize_batch(batch)
+            
+            # Identify silently dropped phrases
+            returned_keys = set(result.keys())
+            missed_in_batch = [p for p in batch if p not in returned_keys]
+            
+            if missed_in_batch:
+                 with open(log_path, "a") as log_file:
+                    for missed in missed_in_batch:
+                        log_file.write(f"{missed} - Reason: Dropped by LLM\n")
+
             canonical_map.update(result)
+
+            with open(output_path, "w") as f:
+                json.dump(canonical_map, f, indent=2)
+
+        # Catch bad JSON from Gemini and log the batch
         except json.JSONDecodeError as e:
-            print(f"  JSON parse failed on batch {i}, skipping. Error: {e}")
+            print(f"  JSON parse failed on batch {i // batch_size + 1}. Logging and skipping. Error: {e}")
+            with open(log_path, "a") as log_file:
+                for p in batch:
+                    log_file.write(f"{p} - Reason: JSON Decode Error ({e})\n")
+                    
+        # Catch rate limits or API crashes
         except Exception as e:
-            print(f"  Error: {e}")
+            print(f"  Error on batch: {e}")
+            with open(log_path, "a") as log_file:
+                for p in batch:
+                    log_file.write(f"{p} - Reason: API Error ({e})\n")
+            
+            if "429" in str(e) or "quota" in str(e).lower():
+                print("Hit API quota limit. Stopping execution.")
+                break
 
-        time.sleep(3)  # free tier: 15 RPM, so 1s between calls is safe
+        time.sleep(5)
 
+    # Summary Stats
     ingredients_only = {k: v for k, v in canonical_map.items() if v is not None}
     noise = [k for k, v in canonical_map.items() if v is None]
 
-    with open(output_path, "w") as f:
-        json.dump(canonical_map, f, indent=2)
-
-    print(f"\nDone — {len(ingredients_only)} ingredients, {len(noise)} noise phrases removed.")
+    print(f"\nDone — {len(ingredients_only)} ingredients, {len(noise)} noise phrases processed total.")
     print(f"Saved to {output_path}")
+    print(f"Check {log_path} for any phrases that failed to process.")
+    
     return canonical_map
 
-
 if __name__ == "__main__":
-    build_canonical_map("data/1000_2000_phrases.csv")
+    # Now you can safely point this at the massive original file
+    build_canonical_map("data/reduced_phrases.csv")
