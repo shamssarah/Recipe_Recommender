@@ -1,6 +1,10 @@
 # WiseCook 🍳
 
-A recipe recommendation system that matches recipes to the ingredients you actually have. Built to minimize grocery trips and reduce food waste.
+WiseCook exists to solve a small, specific moment: you're at the store, something's discounted, you buy it — and then it sits in your fridge because you don't know what to do with it alongside what you already have.
+
+Most recipe apps assume you're planning ahead or shopping for a recipe. WiseCook starts from the opposite direction: what can I make right now, with what's already here, plus this one new thing — before any of it goes to waste.
+
+The goal isn't a bigger recipe database. It's a faster path from "I have this" to "here's what to cook," with a bias toward using up what's about to turn bad.
 
 ## What it does
 
